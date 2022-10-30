@@ -49,6 +49,7 @@ if(site.includes("google.com")){
                 (event){
                 upload_compile(event.target.value.split(" ")[1]);
                 //needs to grab the file from the field
+                //sfdafasfasfas
             });
 
     }
