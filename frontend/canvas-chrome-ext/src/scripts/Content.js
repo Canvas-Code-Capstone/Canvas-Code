@@ -2,9 +2,7 @@
 console.log("Chrome ext ready");
 
 const site = window.location.hostname;
-
 alert("Canvas-Code JS has been injected into: " + site);
-
 
 function read_only_preview_SU(tag, attr_tag, attr_name, value){
     const code_preview = document.createElement(tag);
@@ -23,42 +21,43 @@ if(site.includes("google.com")){
 
     alert("inside google");
     read_only_preview_SU("div", "id", "js-read-only-preview", "custom element 1" );
-    //tesdt
 }
-
 
 (function () {
 
-    function  addBtn() {
-        var btn = document.createElement("input");
-        btn.value = "Submit Check";
-        btn.id = "submit_compile_code";
-        btn.type = "submit";
 
-        //find where to add upload button
-        const el = document.querySelector(".FPdoLc.lJ9FBc center");
+    var fileInput = document.createElement("input");
+    fileInput.id = "fileInput";
+    fileInput.type = "file";
+    fileInput.hidden = "true";
 
-        console.log(el);
-        el.appendChild(btn);
-    }
+    var btn = document.createElement("input");
+    btn.value = "Submit Check";
+    btn.id = "submit_compile_code";
+    btn.type = "button";
+    //btn.onclick = fileInput.click();
 
-    function defineEvents () {
-        document
-            .getElementById("submit_compile_code")
-            .addEventListener("click", function
-                (event){
-                upload_compile(event.target.value.split(" ")[1]);
-                //needs to grab the file from the field
-                //sfdafasfasfas
-            });
+    btn.addEventListener("click", function () {
+        fileInput.click();
 
-    }
+        const endpoint ="upload.php";
+        const formData = new FormData();
+        formData.append("fileInput", fileInput.files[0]);
 
-    function upload_compile(str) {
-        console.log("connect to our server and upload assignment")
-    }
+        //default multipart form data
+        fetch(endpoint, {
+            method: "post",
+            body: formData
+        }).catch(console.error);
 
-    addBtn();
-    defineEvents();
+    })
+
+
+    //find where to add upload button
+    const el = document.querySelector(".FPdoLc.lJ9FBc center");
+    console.log(el);
+    el.appendChild(fileInput);
+    el.appendChild(btn);
 
 })();
+

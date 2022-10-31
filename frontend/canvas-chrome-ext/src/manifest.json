@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Extension Prototype",
   "description": "Prototype for Canvas Extension",
   "version": "0.1.0",
