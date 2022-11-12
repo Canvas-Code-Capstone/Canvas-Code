@@ -29,6 +29,18 @@ public class FileService {
         return true;
     }
 
+    public boolean writeFile(String path, String fileName, byte[] bytes) {
+            try {
+                FileOutputStream fos = new FileOutputStream(path + "/" + fileName);
+                fos.write(bytes);
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        return true;
+    }
+
     public boolean deleteFile(MultipartFile file) {
         return deleteFileHelper(file.getOriginalFilename());
     }
