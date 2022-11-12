@@ -41,7 +41,7 @@ public class FileService {
             e.printStackTrace();
         }
 
-        // write to makefile
+        // writing json
         Path path = Paths.get(newFile.getPath());
         DataBufferUtils.write(dataBufferFlux, path, WRITE).block();
     }

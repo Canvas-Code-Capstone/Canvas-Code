@@ -26,7 +26,7 @@ public class ProcessExecutor {
 
     public boolean executeProcess() {
         ProcessBuilder processBuilder = new ProcessBuilder(this.commands);
-        processBuilder.directory(new File(this.directory));
+        //processBuilder.directory(new File(this.directory));
         processBuilder.redirectErrorStream(true);
 
         try {

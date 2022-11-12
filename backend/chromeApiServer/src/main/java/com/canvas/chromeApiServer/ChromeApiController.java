@@ -1,9 +1,10 @@
 package com.canvas.chromeApiServer;
-
 import com.canvas.dto.CommandOutput;
 import com.canvas.service.JSONParsingService;
 import com.canvas.service.ProcessExecutor;
 import com.canvas.service.FileService;
+
+
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +27,8 @@ public class ChromeApiController {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    @Value("${canvas.mock.url}")
-    // @Value("${canvas.api.url}")
+    //@Value("${canvas.mock.url}")
+    @Value("${canvas.api.url}")
     private String CANVAS_HOST_URL;
 
     @Value("${canvas.api.auth.token}")
@@ -52,7 +53,7 @@ public class ChromeApiController {
             @RequestParam("userId") String userId
     ) {
         // Retrieve file json from Canvas
-        Publisher<DataBuffer> dataBuffer = getFileFromCanvas("68687639");
+        Publisher<DataBuffer> dataBuffer = getFileFromCanvas("68709717");
 
         // Write json to file
         String canvasFileJsonName = "canvas-file-response.json";
@@ -68,13 +69,18 @@ public class ChromeApiController {
             fileService.writeFileFromMultipart(file);
         }
 
+        System.out.println("File directory before exe: " + fileService.getFileDirectory());
+
         // Compile the files and grab output
-        ProcessExecutor processExecutor = new ProcessExecutor(new String[] {"make"}, fileService.getFileDirectory());
+        //fileService.getFileDirectory()
+        //new String[] {"make", "-C", fileService.getFileDirectory()}
+        System.out.println(fileService.getFileDirectory());
+        ProcessExecutor processExecutor = new ProcessExecutor(new String[] {"make", "-C", fileService.getFileDirectory()}, "");
         boolean compileSuccess = processExecutor.executeProcess();
         String output = compileSuccess ? "Your program compiled successfully!" : processExecutor.getProcessOutput();
 
         // Cleanup
-        fileService.deleteDirectory();
+        //fileService.deleteDirectory();
 
         // Generate response
         CommandOutput commandOutput = new CommandOutput(compileSuccess, output);
