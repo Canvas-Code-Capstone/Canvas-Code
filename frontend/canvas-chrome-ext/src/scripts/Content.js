@@ -1,4 +1,3 @@
-
 console.log("Chrome ext ready");
 
 const site = window.location.hostname;
@@ -14,26 +13,34 @@ if (site.includes("https://canvas.instructure.com/")) {
 
 
 function injectScript(file_path, tag){
-    var node = document.getElementsByTagName(tag)[0];
-    var script = document.createElement("script");
+    let node = document.body;
+    let script = document.createElement("script");
     script.setAttribute('type', 'text/javascript');
     script.setAttribute('src', file_path);
+    console.log(script);
+
     node.appendChild(script);
 }
 
-//chrome.scripting.executeScript('scripts/inject_script.js');
+let script_url = chrome.runtime.getURL("scripts/inject_script.js");
+injectScript(script_url, 'body');
 
-injectScript(chrome.extension.getURL('scripts/inject_script.js'), 'body');
 
-window.addEventListener("message", function(event) {
 
-    if (event.data.type
-        && (event.data.type == "FROM_PAGE")
-        && typeof chrome.app.isInstalled !== 'undefined') {
+try {
+    window.addEventListener("message", function(event) {
 
-        console.log("sending message to bg")
+        if (event.data.type
+            && (event.data.type == "FROM_PAGE")) {
 
-        chrome.runtime.sendMessage({output: event.data.output});
+            console.log("sending message to bg")
+            chrome.runtime.sendMessage({output: event.data = "waiting"}, (response) => {
+                console.log(response);
+            });
+        }
 
-    }
-}, false);
+    }, false);
+}catch (e) {
+
+}
+
