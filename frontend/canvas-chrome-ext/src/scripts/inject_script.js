@@ -1,7 +1,6 @@
 
 (function () {
 
-
     var fileInput = document.createElement("input");
     fileInput.id = "fileInput";
     fileInput.type = "file";
@@ -51,18 +50,18 @@
         //need to wait for file to be input
 
         const endpoint ="http://127.0.0.1:8080/evaluate";
-        const formData = new FormData();
 
         //need to extract this somehow
-        let userId = "36497003";
         let courseId = "5660191";
         let assignmentId = "33719910";
-        let bearerToken = "Bearer 7~NXFfejf0q09Rx6d50rAOnZTcwjIXxaZk7pOsmCj2ITVZNoYBmuFtaEuou0asBH5U";
+        let bearerToken = "Bearer 7~E82GOGRAjmxLe6blfRnXCrIFKZdnGdbO1ZEC1O3ILA5FB9mHHUMafp4eM0HT1wC1";
 
         fileInput.addEventListener("change", function (){
+            const formData = new FormData();
             formData.append("files", fileInput.files[0]);
             formData.append("courseId", courseId);
             formData.append("assignmentId", assignmentId);
+            formData.append("userType", "STUDENT")
 
 
             fetch(endpoint, {
