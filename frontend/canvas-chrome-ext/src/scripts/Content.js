@@ -3,7 +3,7 @@ console.log("Chrome ext ready");
 const site = window.location.hostname;
 alert("Canvas-Code JS has been injected into: " + site);
 
-if (site.includes("https://seattleu.instructure.com/")) {
+if (site.includes("https://seattleu.instructure.com")) {
     alert("inside SU");
 }
 
@@ -26,21 +26,24 @@ let script_url = chrome.runtime.getURL("scripts/inject_script.js");
 injectScript(script_url, 'body');
 
 
-
 try {
-    window.addEventListener("message", function(event) {
+    window.addEventListener("message", function(msg) {
 
-        if (event.data.type
-            && (event.data.type == "FROM_PAGE")) {
+        if (msg.data.type
+            && (msg.data.type == "FROM_PAGE")) {
 
-            console.log("sending message to bg")
-            chrome.runtime.sendMessage({output: event.data = "waiting"}, (response) => {
+            console.log("sending message to background script");
+            //console.log(msg.data.type);
+            //console.log(msg.data.output);
+
+            //by default do these msgs alaways go to BG?
+            chrome.runtime.sendMessage({type: "waiting", output: msg.data.output }, (response) => {
                 console.log(response);
             });
         }
 
     }, false);
 }catch (e) {
-
+    console.log(e);
 }
 

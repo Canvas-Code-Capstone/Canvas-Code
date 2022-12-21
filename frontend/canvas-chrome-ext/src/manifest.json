@@ -8,7 +8,7 @@
   },
 
   "web_accessible_resources": [{
-    "resources": ["scripts/inject_script.js", "components/compilation_notification.html"],
+    "resources": ["scripts/inject_script.js", "components/compilation_notification.html", "scripts/notification.js"],
     "matches": ["<all_urls>"]
   }],
 
