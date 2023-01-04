@@ -1,6 +1,5 @@
 try {
 
-
     function onTabLoaded(tabId) {
         return new Promise(resolve => {
             chrome.tabs.onUpdated.addListener(function onUpdated(id, change) {
@@ -15,9 +14,7 @@ try {
     chrome.runtime.onMessage.addListener(async function (message, sender, sendResponse) {
         console.log(message);
 
-
         sendResponse("msg recieved from content");
-
         if (message.type === 'waiting') {
 
             const notification_window = await chrome.tabs.create({
@@ -32,11 +29,14 @@ try {
             });
 
             //TODO does this need to be changed
-            // After the tab has been created, open a window to inject the tab
+            //After the tab has been created, open a window to inject the tab
+
             chrome.windows.create({
                 tabId: notification_window.id,
                 type: 'popup',
-                focused: true
+                focused: true,
+                height: 500,
+                width:600
                 // incognito, top, left, ...
             })
 

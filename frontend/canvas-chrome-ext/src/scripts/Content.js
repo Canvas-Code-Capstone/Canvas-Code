@@ -13,6 +13,7 @@ if (site.includes("https://canvas.instructure.com/")) {
 
 
 function injectScript(file_path, tag){
+
     let node = document.body;
     let script = document.createElement("script");
     script.setAttribute('type', 'text/javascript');
