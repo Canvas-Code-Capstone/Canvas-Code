@@ -5,6 +5,7 @@ import com.canvas.exceptions.CanvasAPIException;
 import com.canvas.service.helperServices.CanvasClientService;
 import com.canvas.service.helperServices.FileService;
 import com.canvas.service.helperServices.ProcessExecutor;
+import com.canvas.service.helperServices.SubmissionService;
 import com.canvas.service.models.CommandOutput;
 import com.canvas.service.models.ExtensionUser;
 import org.slf4j.Logger;
@@ -85,9 +86,10 @@ public class EvaluationService {
         // Write makefile to directory
         writeMakefile(user);
 
+        SubmissionService submissionService = new SubmissionService(canvasClientService);
+
         // Fetch submission files from Canvas
-        Map<String, byte[]> submissionMap = new HashMap<>();
-        submissionMap = canvasClientService.fetchSubmissionFilesFromStudent(user);
+        Map<String, byte[]> submissionMap = submissionService.getSubmissionFileBytes(user);
 
         String userId = user.getUserId();
 
