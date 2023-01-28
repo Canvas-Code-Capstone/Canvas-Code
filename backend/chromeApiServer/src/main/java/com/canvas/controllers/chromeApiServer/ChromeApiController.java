@@ -9,7 +9,9 @@ import com.canvas.service.models.CommandOutput;
 import com.canvas.service.helperServices.CanvasClientService;
 import com.canvas.service.models.ExtensionUser;
 import com.canvas.service.models.UserType;
+import com.canvas.service.models.submission.Deletion;
 import com.canvas.service.models.submission.Submission;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.print.attribute.standard.Media;
 
 /**
  * API Controller for the Chrome Extension handling all the GET and POST requests.
@@ -73,6 +77,24 @@ public class ChromeApiController {
         String userId = canvasClientService.fetchUserId(bearerToken);
         ExtensionUser graderUser = new ExtensionUser(bearerToken, userId, courseId, assignmentId, studentId, userType);
         return submissionDirectoryService.generateSubmissionDirectory(graderUser);
+    }
+
+    @DeleteMapping(
+            value = "/submission/courses/{courseId}/assignments/{assignmentId}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Deletion> deleteStudentSubmissionFiles(
+            @RequestHeader("Authorization") String bearerToken,
+            @PathVariable("assignmentId") String assignmentId,
+            @PathVariable("courseId") String courseId,
+            @RequestParam("studentId") String studentId,
+            @RequestParam("userType") UserType userType
+    ) throws UserNotAuthorizedException, IncorrectRequestParamsException, CanvasAPIException {
+        validateGraderRequest(bearerToken, assignmentId, courseId, studentId, userType);
+
+        String userId = canvasClientService.fetchUserId(bearerToken);
+        ExtensionUser graderUser = new ExtensionUser(bearerToken, userId, courseId, assignmentId, studentId, userType);
+        return submissionDirectoryService.deleteSubmissionDirectory(graderUser);
     }
 
     /**
