@@ -108,15 +108,16 @@ public class SubmissionDirectoryService {
 
     public ResponseEntity<Deletion> deleteSubmissionDirectory(ExtensionUser user) {
         String submissionDirectory = generateUniqueDirectoryName(user.getCourseId(), user.getAssignmentId(), user.getStudentId());
-        String description = user.getCourseId() + " " +  user.getAssignmentId() + " " + user.getStudentId() + " " + submissionDirectory;
+        String description = String.format(
+                "courdeId:%s,\nassignmentId:%s,\nstudentId:%s,\nsubmissionDirectory:%s",
+                user.getCourseId(), user.getAssignmentId(), user.getStudentId(), submissionDirectory
+        );
 
         // Now delete
-        fileService.deleteDirectory(submissionDirectory);
-
-        // TODO: FileService.deleteDirectory signature could be changed to boolean and plugged into success for builder
-        // if successful deletion
+        boolean success = deleteDirectory(submissionDirectory);
+        
         Deletion deletion = Deletion.builder()
-                .success(true)
+                .success(success)
                 .description(description)
                 .build();
 
@@ -128,8 +129,8 @@ public class SubmissionDirectoryService {
      *
      * @param directory name of directory to delete
      */
-    public void deleteDirectory(String directory) {
-        fileService.deleteDirectory(directory);
+    public boolean deleteDirectory(String directory) {
+        return fileService.deleteDirectory(directory);
     }
 
     /**
