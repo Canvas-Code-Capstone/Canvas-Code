@@ -4,10 +4,13 @@ import com.canvas.controllers.chromeApiServer.ChromeApiController;
 import com.canvas.exceptions.CanvasAPIException;
 import com.canvas.service.models.ExtensionUser;
 import com.canvas.service.models.submission.Submission;
+import com.canvas.service.models.OAuthRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.Call;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -73,6 +76,38 @@ public class CanvasClientService {
     }
 
     /**
+     * Makes a call to canvas login/oauth2/token with the required parameters, to get a response code
+     * @param clientId clientId registered with canvas server
+     * @param clientSecret clientSecret generated from canvas server
+     * @param redirectUri redirectUri registered with canvas
+     * @param code code returned from canvas passed as param
+     * @return Response object
+     * @throws CanvasAPIException
+     */
+    public Response fetchAccessTokenResponse (String clientId, String clientSecret, String redirectUri, String code) throws CanvasAPIException {
+        RequestBody formBody = new FormBody.Builder()
+                .addEncoded("grant_type", "authorization_code")
+                .addEncoded("client_id", clientId)
+                .addEncoded("client_secret", clientSecret)
+                .addEncoded("redirect_uri", redirectUri)
+                .addEncoded("code", code)
+                .build();
+
+        try {
+            Request request = new Request.Builder()
+                    .url(CANVAS_URL + "login/oauth2/token")
+                    .addHeader("ContentType", "application/x-www-form-urlencoded;charset=utf-8")
+                    .post(formBody)
+                    .build();
+            return this.okHttpClient.newCall(request).execute();
+
+        } catch (IOException e) {
+            throw throwCanvasException(e);
+        }
+
+    }
+
+    /**
      * Gets a file from a specific course assignment folder in Canvas
      *
      * @param user     Canvas user ID
@@ -93,7 +128,7 @@ public class CanvasClientService {
                     .build();
 
             JsonNode filesResponse = parseResponseToJsonNode(this.okHttpClient.newCall(filesRequest).execute());
-            String fileId = getFileIdFromFilesResponse(filesResponse, fileName + ".dms");
+            String fileId = getFileIdFromFilesResponse(filesResponse, fileName);
             return fetchFile(fileId, user.getBearerToken());
         } catch (Exception e) {
             throw throwCanvasException(e);
@@ -319,7 +354,7 @@ public class CanvasClientService {
      * @return JsonNode
      * @throws IOException error message thrown
      */
-    protected JsonNode parseResponseToJsonNode(Response response) throws IOException {
+    public static JsonNode parseResponseToJsonNode(Response response) throws IOException {
         String r = response.body().string();
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(r);
@@ -395,8 +430,8 @@ public class CanvasClientService {
     protected String getFileIdFromFilesResponse(JsonNode response, String fileName) {
         for (Iterator<JsonNode> it = response.elements(); it.hasNext(); ) {
             JsonNode folder = it.next();
-            JsonNode name = folder.get("filename");
-            if (name != null && folder.get("filename").asText().equals(fileName)) {
+            JsonNode name = folder.get("display_name");
+            if (name != null && folder.get("display_name").asText().equalsIgnoreCase(fileName)) {
                 return folder.get("id").toString();
             }
         }
