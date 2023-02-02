@@ -124,9 +124,14 @@ public class FileService {
      */
     public boolean deleteDirectory(String id) {
         String fileDirectory = generateFileDirectory(id);
+        File fileDirectoryFile = new File(fileDirectory);
+
+        if (!fileDirectoryFile.exists()) {
+            return false;
+        }
 
         try {
-            FileUtils.deleteDirectory(new File(fileDirectory));
+            FileUtils.deleteDirectory(fileDirectoryFile);
             return true;
         } catch (IOException e) {
             e.printStackTrace();

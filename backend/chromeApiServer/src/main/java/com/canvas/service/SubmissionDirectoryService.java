@@ -115,7 +115,7 @@ public class SubmissionDirectoryService {
 
         // Now delete
         boolean success = deleteDirectory(submissionDirectory);
-        
+
         Deletion deletion = Deletion.builder()
                 .success(success)
                 .description(description)
