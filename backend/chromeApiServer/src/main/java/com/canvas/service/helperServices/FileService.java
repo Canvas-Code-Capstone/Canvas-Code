@@ -1,12 +1,12 @@
 package com.canvas.service.helperServices;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
@@ -63,7 +63,7 @@ public class FileService {
     }
 
     /**
-     * Creates a file directory from a byte array
+     * Writes a file to the directory from a byte array
      *
      * @param fileName File name to be evaluated
      * @param bytes    byte array
@@ -97,17 +97,45 @@ public class FileService {
     }
 
     /**
+     * Parses each line from the file and stores each line in an array.
+     *
+     * @param fileName name of file
+     * @param fileDirectory directory where file is located
+     * @return array of each line from the file
+     */
+    public String[] parseLinesFromFile(String fileName, String fileDirectory) {
+        List<String> fileLines = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(concatFileDirAndName(fileDirectory, fileName)))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                fileLines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileLines.toArray(new String[0]);
+    }
+
+
+    /**
      * Deletes the directory based on name
      *
      * @param id Canvas user id associated with the directory
      */
-    public void deleteDirectory(String id) {
+    public boolean deleteDirectory(String id) {
         String fileDirectory = generateFileDirectory(id);
+        File fileDirectoryFile = new File(fileDirectory);
+
+        if (!fileDirectoryFile.exists()) {
+            return false;
+        }
 
         try {
-            FileUtils.deleteDirectory(new File(fileDirectory));
+            FileUtils.deleteDirectory(fileDirectoryFile);
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
