@@ -131,7 +131,7 @@ class ChromeApiControllerUnitTest {
         // Act
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.multipart("/evaluate")
                         .file(multipartFile)
-                        .header("Authorization", "XzlWTV5XWgBLdkyYNlB17ZczaQx7AYpDGBsJUYZzZBQ=")
+                        .header("Authorization", authToken)
                         .param("assignmentId", assignmentID)
                         .param("courseId", courseID)
                         .param("userType", String.valueOf(type))

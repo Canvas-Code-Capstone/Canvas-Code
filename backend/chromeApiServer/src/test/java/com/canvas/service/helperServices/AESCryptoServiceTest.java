@@ -2,12 +2,8 @@ package com.canvas.service.helperServices;
 import com.canvas.exceptions.CanvasAPIException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;

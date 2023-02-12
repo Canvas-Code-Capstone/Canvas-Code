@@ -1,28 +1,27 @@
 package com.canvas.service.helperServices;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.DelegatingFilterProxy;
+
+/**
+ * Filter class for header processing.
+ */
 @Component
 public class HeaderFilter implements Filter {
 
+    /**
+     * Constructor for dependency injection of AESCryptoService.
+     * @param aesCryptoService instance of AESCryptoService
+     */
     @Autowired
     private final AESCryptoService aesCryptoService;
 
@@ -31,13 +30,23 @@ public class HeaderFilter implements Filter {
         this.aesCryptoService = aesCryptoService;
     }
 
+    /**
+     * Implements the doFilter method to process the header by implementing the filter class,
+     * all requests that come in go through this method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @param chain filter chain
+     * @throws IOException if an I/O error occurs
+     * @throws ServletException if a servlet error occurs
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // logic to not do AuthZ for below by urls
+        // logic to filter URLs to implement Authz
         if (httpRequest.getRequestURI().toLowerCase().startsWith("/oauth2response") ||
             httpRequest.getRequestURI().startsWith("/login")) {
             chain.doFilter(request, response);
