@@ -101,7 +101,7 @@ public class CanvasClientService {
 
         try {
             Request request = new Request.Builder()
-                    .url(canvasUrl + "login/oauth2/token")
+                    .url(canvasUrl + "/login/oauth2/token")
                     .addHeader("ContentType", "application/x-www-form-urlencoded;charset=utf-8")
                     .post(formBody)
                     .build();

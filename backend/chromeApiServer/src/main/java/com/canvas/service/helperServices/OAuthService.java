@@ -35,7 +35,7 @@ public class OAuthService {
      */
     public String fetchAccessTokenResponse(String code, String redirectUri) throws CanvasAPIException {
         try {
-            Response response = canvasClientService.fetchAccessTokenResponse(clientId, clientSecret, code, redirectUri);
+            Response response = canvasClientService.fetchAccessTokenResponse(clientId, clientSecret, redirectUri, code);
             return parseAccessTokenResponse(response);
 
         } catch (Exception e) {
