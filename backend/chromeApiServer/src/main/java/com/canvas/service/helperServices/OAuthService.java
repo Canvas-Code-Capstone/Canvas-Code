@@ -3,6 +3,8 @@ package com.canvas.service.helperServices;
 import com.canvas.exceptions.CanvasAPIException;
 import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 /**
  * This class handles OAuth requests for generation, validation of access tokens
@@ -10,9 +12,16 @@ import okhttp3.Response;
 public class OAuthService {
 
     private final CanvasClientService canvasClientService;
+    private String clientSecret;
+    private String clientId;
     //TODO: Add and fetch values from config
-    private final String CLIENT_ID = "10000000000002";
-    private final String CLIENT_SECRET = "xppoeCamrsQVsEdZi5g6ykNE1qEJort6Zdn8ojGTcTBzRO15fR0AEdeeCtqcLymI";
+
+    @Autowired
+    public OAuthService(Environment env, CanvasClientService canvasClientService) {
+        this.clientId = env.getProperty("canvas.clientId");
+        this.clientSecret = env.getProperty("canvas.clientSecret");
+        this.canvasClientService = canvasClientService;
+    }
     public OAuthService(CanvasClientService canvasClientService){
         this.canvasClientService = canvasClientService;
     }
@@ -26,7 +35,7 @@ public class OAuthService {
      */
     public String fetchAccessTokenResponse(String code, String redirectUri) throws CanvasAPIException {
         try {
-            Response response = canvasClientService.fetchAccessTokenResponse(CLIENT_ID, CLIENT_SECRET, code, redirectUri);
+            Response response = canvasClientService.fetchAccessTokenResponse(clientId, clientSecret, code, redirectUri);
             return parseAccessTokenResponse(response);
 
         } catch (Exception e) {

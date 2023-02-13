@@ -38,6 +38,9 @@ public class ChromeApiController {
     private final SubmissionDirectoryService submissionDirectoryService;
     private final OAuthService oauthService;
 
+    @Autowired
+    Environment env;
+
     private final AESCryptoService aesCryptoService;
 
     // Logger object
@@ -49,10 +52,11 @@ public class ChromeApiController {
             EvaluationService studentEval,
             CanvasClientService canvasClientService,
             SubmissionDirectoryService submissionDirectoryService,
-            AESCryptoService aesCryptoService) {
+            AESCryptoService aesCryptoService,
+            Environment env) {
         this.evaluation = studentEval;
         this.canvasClientService = canvasClientService;
-        this.oauthService = new OAuthService(canvasClientService);
+        this.oauthService = new OAuthService(env, canvasClientService);
         this.submissionDirectoryService = submissionDirectoryService;
         this.aesCryptoService = aesCryptoService;
     }

@@ -38,6 +38,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -86,6 +87,9 @@ class ChromeApiControllerUnitTest {
     @MockBean
     AESCryptoService aesCryptoService;
 
+    @Autowired
+    Environment env;
+
     ChromeApiController controller;
 
     /**
@@ -99,7 +103,7 @@ class ChromeApiControllerUnitTest {
         filterRegistrationBean.setUrlPatterns(Arrays.asList("/submission/*","/evaluate"));
         filterRegistrationBean.setName("MyFilter");
         context.getAutowireCapableBeanFactory().initializeBean(filterRegistrationBean, "MyFilter");
-        controller = new ChromeApiController(evaluationService, canvasClientService, submissionDirectoryService, aesCryptoService);
+        controller = new ChromeApiController(evaluationService, canvasClientService, submissionDirectoryService, aesCryptoService, env);
     }
 
     /**
