@@ -114,18 +114,36 @@ function getParameters() {
 function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     document.getElementById("iframe_holder").style.display = "none";
 
+    let appBar = InstructorView_appBar();
     let tabContainer = initTabContainer();
     let codeContainer = initCodeContainer();
-    let darkModeButton = initDarkModeButton();
-
-    instructorViewContainer.appendChild(darkModeButton);
-    instructorViewContainer.appendChild(tabContainer);
-    instructorViewContainer.appendChild(codeContainer);
 
     let isInDarkMode = false;
     let fileName = submissionFiles[0].name;
     let previousCodeWindowId = getCodeWindowId(fileName);
     let previousTabId = getTabId(fileName)
+
+
+    let darkModeButton = initDarkModeButton();
+    let playButton = initPlayButton();
+    let abortButton = initAbortButton();
+
+    darkModeButton.addEventListener("click", function () {
+        let codeContainerChildElements = codeContainer.getElementsByTagName("textarea");
+        for (var i = 0; i < codeContainerChildElements.length; i++) {
+            if (isInDarkMode) {
+                let textAreaElement = codeContainerChildElements[i];
+                textAreaElement.style.backgroundColor = "#f1f1f1";
+                textAreaElement.style.color = "black"
+            } else {
+                let textAreaElement = codeContainerChildElements[i];
+                textAreaElement.style.backgroundColor = "black";
+                textAreaElement.style.color = "white";
+            }
+        }
+        isInDarkMode = !isInDarkMode; // Flip to other mode
+    });
+
 
     for (var i = 0; i < submissionFiles.length; i++) {
         let content = submissionFiles[i].fileContent;
@@ -167,21 +185,15 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
             })
         });
 
-        darkModeButton.addEventListener("click", function () {
-            let codeContainerChildElements = codeContainer.getElementsByTagName("textarea");
-            for (var i = 0; i < codeContainerChildElements.length; i++) {
-                if (isInDarkMode) {
-                    let textAreaElement = codeContainerChildElements[i];
-                    textAreaElement.style.backgroundColor = "#f1f1f1";
-                    textAreaElement.style.color = "black"
-                } else {
-                    let textAreaElement = codeContainerChildElements[i];
-                    textAreaElement.style.backgroundColor = "black";
-                    textAreaElement.style.color = "white";
-                }
-            }
-            isInDarkMode = !isInDarkMode; // Flip to other mode
-        });
+
+        appBar.appendChild(playButton);
+        appBar.appendChild(abortButton);
+        appBar.appendChild(darkModeButton);
+
+        instructorViewContainer.appendChild(appBar);
+        instructorViewContainer.appendChild(tabContainer);
+        instructorViewContainer.appendChild(codeContainer);
+
 
     }
 
@@ -244,13 +256,40 @@ function initTerminalFrame() {
     return terminalFrame;
 }
 
-function initInstructorViewContainer() {
-    let instructorViewContainer = document.createElement("div");
-    instructorViewContainer.id = "instructor-view-container";
-    instructorViewContainer.style.margin = "20px";
-    instructorViewContainer.style.height = "100%";
-    instructorViewContainer.style.overflowY = "scroll";
-    return instructorViewContainer;
+//APP BAR SPECIFIC FUNCTIONS
+function InstructorView_appBar(){
+    let instructorViewAppBar = document.createElement("div");
+    instructorViewAppBar.className = "instructor-appbar";
+    instructorViewAppBar.id = "instructor-view-appbar";
+    instructorViewAppBar.style.width = "100%";
+
+    return instructorViewAppBar;
+}
+
+function initAbortButton(){
+    let abortButton = document.createElement("button");
+    abortButton.icon = document.createElement("icon");
+    abortButton.innerHTML ='&#x2716;'; //abort button icon
+    abortButton.className= 'abort-button';
+
+    return abortButton;
+}
+
+function initPlayButton(){
+    let playButton = document.createElement("button");
+    playButton.icon = document.createElement("icon");
+    playButton.innerHTML ='&#x25B6;'; //play button icon
+    playButton.className= 'abort-button';
+
+    return playButton;
+}
+
+function initDarkModeButton() {
+    let darkModeButton = document.createElement("button");
+    darkModeButton.innerHTML = '&#x1F319;'; //hex for wanning crescent
+    darkModeButton.className = 'dark-mode';
+
+    return darkModeButton;
 }
 
 function initTabContainer() {
@@ -259,13 +298,6 @@ function initTabContainer() {
     tabContainer.style.border = "2px solid #43A6C6";
     tabContainer.style.backgroundColor = "#f1f1f1";
     return tabContainer;
-}
-
-function initCodeContainer() {
-    let codeContainer = document.createElement("div");
-    codeContainer.id = "code-container";
-    codeContainer.style.height = "70%";
-    return codeContainer;
 }
 
 function initTabElement(fileName) {
@@ -278,6 +310,22 @@ function initTabElement(fileName) {
     return tab;
 }
 
+function initInstructorViewContainer() {
+    let instructorViewContainer = document.createElement("div");
+    instructorViewContainer.id = "instructor-view-container";
+    instructorViewContainer.style.margin = "20px";
+    instructorViewContainer.style.height = "100%";
+    instructorViewContainer.style.overflowY = "scroll";
+    return instructorViewContainer;
+}
+
+function initCodeContainer() {
+    let codeContainer = document.createElement("div");
+    codeContainer.id = "code-container";
+    codeContainer.style.height = "70%";
+    return codeContainer;
+}
+
 function initCodeWindow(fileName, isDisplayed) {
     let codeWindow = document.createElement("div");
     codeWindow.id = getCodeWindowId(fileName);
@@ -285,14 +333,6 @@ function initCodeWindow(fileName, isDisplayed) {
     codeWindow.style.height = "100%";
     codeWindow.style.width = "100%";
     return codeWindow;
-}
-
-function initDarkModeButton() {
-    let darkModeButton = document.createElement("button");
-    darkModeButton.textContent = "Toggle Dark Mode";
-    darkModeButton.style.padding = "10px";
-    darkModeButton.style.margin = "5px";
-    return darkModeButton;
 }
 
 function formatCodeView(name, content) {
