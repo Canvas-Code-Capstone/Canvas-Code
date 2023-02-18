@@ -114,6 +114,7 @@ function getParameters() {
 function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     document.getElementById("iframe_holder").style.display = "none";
 
+    console.log("generate terminal view function");
     let appBar = InstructorView_appBar();
     let tabContainer = initTabContainer();
     let codeContainer = initCodeContainer();
@@ -169,17 +170,6 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     });
 
 
-    //TODO where is terminal frame being instantiated?
-    terminalFrame.addEventListener('load', async function () {
-        console.log('waiting for everything else to load in terminal')
-        setTimeout(async () => {
-            console.log('waited 5 seconds');
-            await changeToSubmissionDirectory(submissionDirectory)
-        }, 5000);
-    });
-
-
-
     for (var i = 0; i < submissionFiles.length; i++) {
         let content = submissionFiles[i].fileContent;
         let name = submissionFiles[i].name;
@@ -224,6 +214,7 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
         appBar.appendChild(playButton);
         appBar.appendChild(abortButton);
         appBar.appendChild(darkModeButton);
+
 
         instructorViewContainer.appendChild(appBar);
         instructorViewContainer.appendChild(tabContainer);
