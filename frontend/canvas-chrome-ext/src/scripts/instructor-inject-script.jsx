@@ -128,6 +128,7 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     let playButton = initPlayButton();
     let abortButton = initAbortButton();
 
+    //Darkmode toggle
     darkModeButton.addEventListener("click", function () {
         let codeContainerChildElements = codeContainer.getElementsByTagName("textarea");
         for (var i = 0; i < codeContainerChildElements.length; i++) {
@@ -143,6 +144,40 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
         }
         isInDarkMode = !isInDarkMode; // Flip to other mode
     });
+
+    //Play button listener
+    playButton.addEventListener("click", async function (){
+        //send post request to backend to start compilation or send makefile?
+        console.log('calling compilation from instructor view');
+        setTimeout(async () => {
+            console.log('waited 5 seconds');
+            await callCompilation();
+        }, 5000);
+
+    });
+
+
+    //Play button listener
+    abortButton.addEventListener("click", async function (){
+        //send post request to backend to start compilation or send makefile?
+        console.log('calling compilation from instructor view');
+        setTimeout(async () => {
+            console.log('waited 5 seconds');
+            await abortScriptExecution();
+        }, 5000);
+
+    });
+
+
+    //TODO where is terminal frame being instantiated?
+    terminalFrame.addEventListener('load', async function () {
+        console.log('waiting for everything else to load in terminal')
+        setTimeout(async () => {
+            console.log('waited 5 seconds');
+            await changeToSubmissionDirectory(submissionDirectory)
+        }, 5000);
+    });
+
 
 
     for (var i = 0; i < submissionFiles.length; i++) {
@@ -245,6 +280,49 @@ async function changeToSubmissionDirectory(submissionDirectory) {
             console.log(responseJson);
         });
 }
+
+/**
+ * Instructor view play button was pressed and a call to compile the current
+ * read only script was made.
+ * @returns {Promise<void>}
+ */
+async function callCompilation(){
+    //TODO unsure of endpoint for play call from instructor view
+    let port = 7000;
+    await fetch(`http://localhost:${port}/dir`, {
+        method: "POST",
+        body: JSON.stringify({
+            data: "CALL COMPILATIOn"
+        })
+    })
+        .catch(console.error)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            console.log(responseJson);
+        });
+}
+
+/**
+ * Instructor view abort button was pressed and a call to end current
+ * read only script was made.
+ * @returns {Promise<void>}
+ */
+async function abortScriptExecution(){
+    //TODO unsure of endpoint for abort call from instructor view
+    let port = 7000;
+    await fetch(`http://localhost:${port}/dir`, {
+        method: "POST",
+        body: JSON.stringify({
+            data: "ABORT SCRIPT INTERACTION with SSH"
+        })
+    })
+        .catch(console.error)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            console.log(responseJson);
+        });
+}
+
 
 function initTerminalFrame() {
     let terminalFrame = document.createElement("iframe");
