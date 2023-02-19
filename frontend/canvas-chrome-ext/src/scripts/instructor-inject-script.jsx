@@ -17,7 +17,7 @@ async function beginUrlChangeListener() {
         if (window.location.href !== previousUrl) {
             console.log(`URL changed from ${previousUrl} to ${window.location.href}`);
             if (!isFirstStudent) {
-                erasePreviousStudentView(previousUrl);
+                await erasePreviousStudentView(previousUrl);
             }
 
             previousUrl = window.location.href;
