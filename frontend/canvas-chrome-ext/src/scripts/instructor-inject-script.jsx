@@ -16,9 +16,11 @@ async function beginUrlChangeListener() {
     const urlObserver = new MutationObserver(async function (mutations) {
         if (window.location.href !== previousUrl) {
             console.log(`URL changed from ${previousUrl} to ${window.location.href}`);
-            previousUrl = window.location.href;
+            if (!isFirstStudent) {
+                erasePreviousStudentView(previousUrl);
+            }
 
-            // TODO: call delete API to erase previous student submission directory
+            previousUrl = window.location.href;
 
             if (studentHasSubmission()) {
                 // On URL change, update UI with new student submission data
@@ -36,7 +38,7 @@ async function beginUrlChangeListener() {
 }
 
 async function updateStudentSubmissionView() {
-    const params = getParameters();
+    const params = getParameters(window.location.href);
 
     let endpoint = `http://localhost:8080/submission/courses/${params.courseId}/assignments/${params.assignmentId}/?`
 
@@ -58,10 +60,6 @@ async function updateStudentSubmissionView() {
             // Check current student page matches the studentId in case
             // new student submission was clicked before API call is resolved
             if (window.location.href.includes(params["studentId"])) {
-                if (!isFirstStudent) {
-                    erasePreviousStudentView();
-                }
-
                 let instructorViewContainer = initInstructorViewContainer();
                 generateReadOnlyCodeView(responseJson.submissionFiles, instructorViewContainer);
                 generateTerminalView(responseJson.submissionDirectory, instructorViewContainer);
@@ -70,20 +68,43 @@ async function updateStudentSubmissionView() {
         });
 }
 
-async function erasePreviousStudentView() {
+async function erasePreviousStudentView(previousUrl) {
     // This will remove everything inside the container (RO-view and terminal)
     let prevInstructorViewContainer = document.getElementById('instructor-view-container');
     prevInstructorViewContainer.remove();
 
+    let params = getParameters(previousUrl);
+    await deletePreviousStudentSubmissionDirectory(params)
+
     await closeSSHSession();
+}
+
+async function deletePreviousStudentSubmissionDirectory(params) {
+    console.log(params)
+    let endpoint = `http://localhost:8080/submission/courses/${params.courseId}/assignments/${params.assignmentId}/?`
+
+    // FIXME: directory not being deleted for some reason
+    await fetch(endpoint + new URLSearchParams({
+        studentId: params.studentId,
+        userType: params.userType
+    }), {
+        method: "DELETE",
+        headers: new Headers({
+            'Authorization': params.bearerToken
+        })
+    })
+        .catch(console.error)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            console.log(responseJson);
+        });
 }
 
 function studentHasSubmission() {
     return document.getElementById("this_student_does_not_have_a_submission").style.display === "none";
 }
 
-function getParameters() {
-    let canvasUrl = window.location.href;
+function getParameters(canvasUrl) {
     console.log(canvasUrl);
 
     const urlSearchParamsObj = new URLSearchParams(window.location.search);
