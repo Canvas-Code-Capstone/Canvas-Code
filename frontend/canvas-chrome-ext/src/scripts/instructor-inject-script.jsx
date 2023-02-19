@@ -106,8 +106,7 @@ function studentHasSubmission() {
 
 function getParameters(canvasUrl) {
     console.log(canvasUrl);
-
-    const urlSearchParamsObj = new URLSearchParams(window.location.search);
+    const urlSearchParamsObj = new URL(canvasUrl).searchParams;
     const queryParams = Object.fromEntries(urlSearchParamsObj.entries());
 
     console.log('query params: ' + queryParams);
