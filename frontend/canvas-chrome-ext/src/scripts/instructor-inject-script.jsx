@@ -1,8 +1,11 @@
 console.log("inside instructor-inject-script.jsx")
 
 window.addEventListener('beforeunload', async (event) => {
-    await closeSSHSession();
-    return 'closing ssh session'
+    event.preventDefault();
+    closeSSHSession();
+    const params = getParameters(document.location.href);
+    await deletePreviousStudentSubmissionDirectory(params);
+    return 'deleting submission directory and closing ssh session';
 })
 
 let isFirstStudent = true;
@@ -13,28 +16,38 @@ beginUrlChangeListener();
 async function beginUrlChangeListener() {
     let previousUrl = "";
 
-    const urlObserver = new MutationObserver(async function (mutations) {
+    // Checking every second if the URL changes
+    setInterval(async function() {
+        console.log('hey!')
         if (window.location.href !== previousUrl) {
             console.log(`URL changed from ${previousUrl} to ${window.location.href}`);
             if (!isFirstStudent) {
-                await erasePreviousStudentView(previousUrl);
-            }
+                console.log('calling erasePreviousStudentView')
+                console.log('previousUrl: ', previousUrl)
+                console.log('current url: ', window.location.href)
 
+                // In case previous student didn't have a submission, the instructor
+                // view container wouldn't exist
+                try {
+                    await erasePreviousStudentView(previousUrl);
+                } catch (error) {
+                    console.log(error)
+                }
+
+            }
             previousUrl = window.location.href;
 
             if (studentHasSubmission()) {
+                console.log('calling updateStudentSubmissionView')
                 // On URL change, update UI with new student submission data
-                await updateStudentSubmissionView();
+                updateStudentSubmissionView();
+                isFirstStudent = false;
             } else {
                 console.log("student missing submission, did not update view");
             }
+
         }
-    });
-
-    const config = { subtree: true, childList: true };
-
-    // Begin listener for URL changes
-    urlObserver.observe(document, config);
+    }, 1000);
 }
 
 async function updateStudentSubmissionView() {
@@ -63,7 +76,6 @@ async function updateStudentSubmissionView() {
                 let instructorViewContainer = initInstructorViewContainer();
                 generateReadOnlyCodeView(responseJson.submissionFiles, instructorViewContainer);
                 generateTerminalView(responseJson.submissionDirectory, instructorViewContainer);
-                isFirstStudent = false;
             }
         });
 }
@@ -73,17 +85,15 @@ async function erasePreviousStudentView(previousUrl) {
     let prevInstructorViewContainer = document.getElementById('instructor-view-container');
     prevInstructorViewContainer.remove();
 
+    closeSSHSession();
     let params = getParameters(previousUrl);
-    await deletePreviousStudentSubmissionDirectory(params)
-
-    await closeSSHSession();
+    await deletePreviousStudentSubmissionDirectory(params);
 }
 
 async function deletePreviousStudentSubmissionDirectory(params) {
     console.log(params)
     let endpoint = `http://localhost:8080/submission/courses/${params.courseId}/assignments/${params.assignmentId}/?`
 
-    // FIXME: directory not being deleted for some reason
     await fetch(endpoint + new URLSearchParams({
         studentId: params.studentId,
         userType: params.userType
