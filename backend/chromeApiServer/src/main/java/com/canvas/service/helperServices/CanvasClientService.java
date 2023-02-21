@@ -38,26 +38,18 @@ public class CanvasClientService {
 
     private final OkHttpClient okHttpClient;
 
-    @Autowired
-    private Environment env;
-
     // Logger object
     private static final Logger logger = LoggerFactory.getLogger(CanvasClientService.class);
 
 
-    /**
-     * Constructor with not arguments
-     */
     @Autowired
-    public CanvasClientService(Environment env) {
+    protected CanvasClientService(Environment env) {
         this.canvasUrl = env.getProperty("canvas.url");
         this.okHttpClient = new OkHttpClient();
     }
 
-    @Autowired
-    protected CanvasClientService(Environment env, OkHttpClient okHttpClient) {
-        this.env = env;
-        this.canvasUrl = env.getProperty("canvas.url");
+    protected CanvasClientService(String canvasUrl, OkHttpClient okHttpClient) {
+        this.canvasUrl = canvasUrl;
         this.okHttpClient = okHttpClient;
     }
 

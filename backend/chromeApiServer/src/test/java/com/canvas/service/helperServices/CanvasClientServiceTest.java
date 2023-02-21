@@ -189,7 +189,7 @@ class CanvasClientServiceTest {
     @BeforeEach
     public void before() {
         MockitoAnnotations.openMocks(this);
-        canvasClientService =  new CanvasClientService(env, okHttpClient);
+        canvasClientService =  new CanvasClientService("http://canvasDummyUrl.com", okHttpClient);
     }
 
     @Test
