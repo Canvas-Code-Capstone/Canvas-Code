@@ -126,7 +126,7 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
 
 
     let darkModeButton = initDarkModeButton();
-    let playButton = initPlayButton();
+    let compileButton = initPlayButton();
     let abortButton = initAbortButton();
 
     //Darkmode toggle
@@ -146,27 +146,19 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
         isInDarkMode = !isInDarkMode; // Flip to other mode
     });
 
-    //Play button listener
-    playButton.addEventListener("click", async function (){
+    //Compile button listener
+    compileButton.addEventListener("click", async function (){
         //send post request to backend to start compilation or send makefile?
-        console.log('calling compilation from instructor view');
-        setTimeout(async () => {
-            console.log('waited 5 seconds');
-            await callCompilation();
-        }, 5000);
-
+        console.log('calling compileButtonCommand from instructor view');
+        await compileButtonCommand();
     });
 
 
-    //Play button listener
+    //Abort button listener
     abortButton.addEventListener("click", async function (){
         //send post request to backend to start compilation or send makefile?
-        console.log('calling compilation from instructor view');
-        setTimeout(async () => {
-            console.log('waited 5 seconds');
-            await abortScriptExecution();
-        }, 5000);
-
+        console.log('calling abort from instructor view');
+        await abortScriptExecution();
     });
 
 
@@ -211,7 +203,7 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
         });
 
 
-        appBar.appendChild(playButton);
+        appBar.appendChild(compileButton);
         appBar.appendChild(abortButton);
         appBar.appendChild(darkModeButton);
 
@@ -277,14 +269,11 @@ async function changeToSubmissionDirectory(submissionDirectory) {
  * read only script was made.
  * @returns {Promise<void>}
  */
-async function callCompilation(){
+async function compileButtonCommand(){
     //TODO unsure of endpoint for play call from instructor view
     let port = 7000;
-    await fetch(`http://localhost:${port}/dir`, {
+    await fetch(`http://localhost:${port}/compile`, {
         method: "POST",
-        body: JSON.stringify({
-            data: "CALL COMPILATIOn"
-        })
     })
         .catch(console.error)
         .then((response) => response.json())
@@ -301,11 +290,8 @@ async function callCompilation(){
 async function abortScriptExecution(){
     //TODO unsure of endpoint for abort call from instructor view
     let port = 7000;
-    await fetch(`http://localhost:${port}/dir`, {
+    await fetch(`http://localhost:${port}/abort`, {
         method: "POST",
-        body: JSON.stringify({
-            data: "ABORT SCRIPT INTERACTION with SSH"
-        })
     })
         .catch(console.error)
         .then((response) => response.json())
@@ -347,7 +333,7 @@ function initAbortButton(){
 function initPlayButton(){
     let playButton = document.createElement("button");
     playButton.icon = document.createElement("icon");
-    playButton.innerHTML ='&#x25B6;'; //play button icon
+    playButton.innerHTML ='&#x1F528;'; //play button icon
     playButton.className= 'abort-button';
 
     return playButton;
