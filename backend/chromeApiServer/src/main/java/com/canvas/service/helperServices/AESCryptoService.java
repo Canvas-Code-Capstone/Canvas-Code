@@ -1,12 +1,14 @@
 package com.canvas.service.helperServices;
 
 import com.canvas.exceptions.CanvasAPIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -29,6 +31,8 @@ public class AESCryptoService {
         this.setKey(env.getProperty("canvas.secretKey"));
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(HeaderFilter.class);
+
     /**
      * Helper method to set the secret key.
      *
@@ -37,13 +41,13 @@ public class AESCryptoService {
     private void setKey(String myKey) {
         MessageDigest sha = null;
         try {
-            byte[] key = myKey.getBytes("UTF-8");
+            byte[] key = myKey.getBytes(StandardCharsets.UTF_8);
             sha = MessageDigest.getInstance("SHA-1");
             key = sha.digest(key);
             key = Arrays.copyOf(key, 16);
             secretKey = new SecretKeySpec(key, "AES");
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            logger.error(e.getMessage());
         }
     }
 
@@ -60,9 +64,9 @@ public class AESCryptoService {
             //this.setKey(secret);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            System.out.println("Error while encrypting: " + e.toString());
+            logger.error(e.getMessage());
             throw new CanvasAPIException(e.getMessage());
         }
     }
@@ -82,6 +86,7 @@ public class AESCryptoService {
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new CanvasAPIException(e.getMessage());
         }
     }

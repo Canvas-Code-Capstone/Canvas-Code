@@ -22,37 +22,40 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptAndDecrypt() {
+    public void testEncryptAndDecrypt_to_ensure_the_original_string_has_not_been_modified() throws CanvasAPIException {
+        //Setup
         String originalString = "This is a test string";
         String secretKey = "This is a secret key";
         AESCryptoService aesCryptoService = new AESCryptoService(env);
-        try {
-            String encryptedString = aesCryptoService.encrypt(originalString, secretKey);
-            String decryptedString = aesCryptoService.decrypt(encryptedString, secretKey);
 
-            assertEquals("The original and decrypted strings should match", originalString, decryptedString);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //Act
+        String encryptedString = aesCryptoService.encrypt(originalString, secretKey);
+        String decryptedString = aesCryptoService.decrypt(encryptedString, secretKey);
+
+        //Assert
+        assertEquals("The original and decrypted strings should match", originalString, decryptedString);
     }
 
     @Test
     public void testEncryptWithNullInput() {
+        //Setup
         String originalString = null;
         String secretKey = "This is a secret key";
         AESCryptoService aesCryptoService = new AESCryptoService(env);
 
+        //Assert
         assertThrows(CanvasAPIException.class, () -> aesCryptoService.encrypt(originalString, secretKey));
 
     }
 
     @Test
     public void testDecryptWithNullInput() {
+        //Setup
         String originalString = "This is a test string";
         String secretKey = null;
         AESCryptoService aesCryptoService = new AESCryptoService(env);
 
+        //Assert
         assertThrows(CanvasAPIException.class, () -> aesCryptoService.decrypt(originalString, secretKey));
-
     }
 }

@@ -9,13 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Filter class for header processing.
  */
-@Component
+@Service
 public class HeaderFilter implements Filter {
 
     /**
@@ -24,6 +26,10 @@ public class HeaderFilter implements Filter {
      */
     @Autowired
     private final AESCryptoService aesCryptoService;
+
+    public static final String Auth = "Authorization";
+
+    private static final Logger logger = LoggerFactory.getLogger(HeaderFilter.class);
 
     @Autowired
     public HeaderFilter(AESCryptoService aesCryptoService) {
@@ -53,7 +59,7 @@ public class HeaderFilter implements Filter {
             return;
         }
 
-        String headerValue = httpRequest.getHeader("Authorization");
+        String headerValue = httpRequest.getHeader(Auth);
 
         // process request based on header value
         if (StringUtils.isBlank(headerValue)) {
@@ -75,7 +81,7 @@ public class HeaderFilter implements Filter {
                 };
                 chain.doFilter(modifiedRequest, httpResponse);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
                 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

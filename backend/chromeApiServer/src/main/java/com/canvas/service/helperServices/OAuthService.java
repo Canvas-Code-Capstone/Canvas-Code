@@ -3,26 +3,29 @@ package com.canvas.service.helperServices;
 import com.canvas.exceptions.CanvasAPIException;
 import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
 /**
  * This class handles OAuth requests for generation, validation of access tokens
  */
+@Service
 public class OAuthService {
 
     private final CanvasClientService canvasClientService;
     private String clientSecret;
     private String clientId;
-    //TODO: Add and fetch values from config
+
+    private static final Logger logger = LoggerFactory.getLogger(OAuthService.class);
+
 
     @Autowired
     public OAuthService(Environment env, CanvasClientService canvasClientService) {
         this.clientId = env.getProperty("canvas.clientId");
         this.clientSecret = env.getProperty("canvas.clientSecret");
-        this.canvasClientService = canvasClientService;
-    }
-    public OAuthService(CanvasClientService canvasClientService){
         this.canvasClientService = canvasClientService;
     }
 
@@ -39,6 +42,7 @@ public class OAuthService {
             return parseAccessTokenResponse(response);
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             throw new CanvasAPIException(e.getMessage());
         }
     }

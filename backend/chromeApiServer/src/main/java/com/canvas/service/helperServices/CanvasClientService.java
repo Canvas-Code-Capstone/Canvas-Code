@@ -54,6 +54,7 @@ public class CanvasClientService {
         this.okHttpClient = new OkHttpClient();
     }
 
+    @Autowired
     protected CanvasClientService(Environment env, OkHttpClient okHttpClient) {
         this.env = env;
         this.canvasUrl = env.getProperty("canvas.url");
