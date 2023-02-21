@@ -115,7 +115,7 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     document.getElementById("iframe_holder").style.display = "none";
 
     console.log("generate terminal view function");
-    let appBar = InstructorView_appBar();
+    let appBar = instructorViewAppBar();
     let tabContainer = initTabContainer();
     let codeContainer = initCodeContainer();
 
@@ -312,7 +312,7 @@ function initTerminalFrame() {
 }
 
 //APP BAR SPECIFIC FUNCTIONS
-function InstructorView_appBar(){
+function instructorViewAppBar(){
     let instructorViewAppBar = document.createElement("div");
     instructorViewAppBar.className = "instructor-appbar";
     instructorViewAppBar.id = "instructor-view-appbar";
