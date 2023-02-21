@@ -22,7 +22,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptAndDecrypt_to_ensure_the_original_string_has_not_been_modified() throws CanvasAPIException {
+    public void testEncryptAndDecrypt_to_ensure_entered_input_is_not_modified() throws CanvasAPIException {
         //Setup
         String originalString = "This is a test string";
         String secretKey = "This is a secret key";
@@ -37,7 +37,7 @@ public class AESCryptoServiceTest {
     }
 
     @Test
-    public void testEncryptWithNullInput() {
+    public void testEncryptWithNullInput_method_should_throw_exception_without_input() {
         //Setup
         String originalString = null;
         String secretKey = "This is a secret key";
@@ -45,11 +45,10 @@ public class AESCryptoServiceTest {
 
         //Assert
         assertThrows(CanvasAPIException.class, () -> aesCryptoService.encrypt(originalString, secretKey));
-
     }
 
     @Test
-    public void testDecryptWithNullInput() {
+    public void testDecryptWithNullInput_method_should_throw_exception_without_input() {
         //Setup
         String originalString = "This is a test string";
         String secretKey = null;
