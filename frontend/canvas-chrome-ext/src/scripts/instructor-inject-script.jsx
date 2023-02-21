@@ -114,7 +114,6 @@ function getParameters() {
 function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     document.getElementById("iframe_holder").style.display = "none";
 
-    console.log("generate terminal view function");
     let appBar = instructorViewAppBar();
     let tabContainer = initTabContainer();
     let codeContainer = initCodeContainer();
@@ -126,7 +125,7 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
 
 
     let darkModeButton = initDarkModeButton();
-    let compileButton = initPlayButton();
+    let compileButton = initCompileButton();
     let abortButton = initAbortButton();
 
     //Darkmode toggle
@@ -328,13 +327,13 @@ function initAbortButton(){
     return abortButton;
 }
 
-function initPlayButton(){
-    let playButton = document.createElement("button");
-    playButton.icon = document.createElement("icon");
-    playButton.innerHTML ='&#x1F528;'; //play button icon
-    playButton.className= 'abort-button';
+function initCompileButton(){
+    let compileButton = document.createElement("button");
+    compileButton.icon = document.createElement("icon");
+    compileButton.innerHTML ='&#x1F528;'; //play button icon
+    compileButton.className= 'abort-button';
 
-    return playButton;
+    return compileButton;
 }
 
 function initDarkModeButton() {
