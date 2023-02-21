@@ -270,7 +270,6 @@ async function changeToSubmissionDirectory(submissionDirectory) {
  * @returns {Promise<void>}
  */
 async function compileButtonCommand(){
-    //TODO unsure of endpoint for play call from instructor view
     let port = 7000;
     await fetch(`http://localhost:${port}/compile`, {
         method: "POST",
@@ -288,7 +287,6 @@ async function compileButtonCommand(){
  * @returns {Promise<void>}
  */
 async function abortScriptExecution(){
-    //TODO unsure of endpoint for abort call from instructor view
     let port = 7000;
     await fetch(`http://localhost:${port}/abort`, {
         method: "POST",
