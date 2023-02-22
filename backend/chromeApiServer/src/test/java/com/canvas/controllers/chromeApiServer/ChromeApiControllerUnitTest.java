@@ -91,7 +91,8 @@ class ChromeApiControllerUnitTest {
     ChromeApiController controller;
 
     /**
-     * Placeholder for action to take before running tests
+     * action to take before running tests
+     * We are setting the filter in the test environment to decrypt the access token in the request headers.
      */
     @BeforeEach
     void setUp() {
