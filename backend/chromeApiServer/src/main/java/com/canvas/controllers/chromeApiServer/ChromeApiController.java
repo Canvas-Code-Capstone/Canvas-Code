@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * API Controller for the Chrome Extension handling all the GET and POST requests.
@@ -139,7 +140,7 @@ public class ChromeApiController {
             @RequestParam("assignmentId") String assignmentId,
             @RequestParam("courseId") String courseId,
             @RequestParam("userType") UserType type
-    ) throws UserNotAuthorizedException, IncorrectRequestParamsException, CanvasAPIException {
+    ) throws UserNotAuthorizedException, IncorrectRequestParamsException, CanvasAPIException, IOException {
         // Check request params are correct, not null or empty.
         // TODO: What do we consider incorrect? Define further
         if (bearerToken == null || assignmentId == null || courseId == null || files == null || type == null) {
@@ -169,6 +170,7 @@ public class ChromeApiController {
         // Create a user object with params, studentId is null
         ExtensionUser user = new ExtensionUser(decryptedBearerToken, userId, courseId, assignmentId, null, type);
 
+        // TODO: check if submission includes makefile
         return evaluation.compileStudentCodeFile(user, files);
     }
 

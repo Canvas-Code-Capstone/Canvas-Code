@@ -1,6 +1,8 @@
 package com.canvas.service.helperServices;
 
 import com.canvas.exceptions.CanvasAPIException;
+import com.canvas.exceptions.MakefileNotFoundException;
+import com.canvas.service.SubmissionDirectoryService;
 import com.canvas.service.models.ExtensionUser;
 import com.canvas.service.models.submission.Submission;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -129,6 +131,9 @@ public class CanvasClientService {
             JsonNode filesResponse = parseResponseToJsonNode(this.okHttpClient.newCall(filesRequest).execute());
             String fileId = getFileIdFromFilesResponse(filesResponse, fileName);
             return fetchFile(fileId, user.getBearerToken());
+        } catch (MakefileNotFoundException makefileNotFoundException) {
+            logger.error(makefileNotFoundException.getMessage());
+            throw makefileNotFoundException;
         } catch (Exception e) {
             throw throwCanvasException(e);
         }
@@ -426,7 +431,7 @@ public class CanvasClientService {
      * @param fileName name of file to retrieve
      * @return string of file id
      */
-    protected String getFileIdFromFilesResponse(JsonNode response, String fileName) {
+    protected String getFileIdFromFilesResponse(JsonNode response, String fileName) throws CanvasAPIException {
         for (Iterator<JsonNode> it = response.elements(); it.hasNext(); ) {
             JsonNode folder = it.next();
             JsonNode name = folder.get("display_name");
@@ -434,7 +439,10 @@ public class CanvasClientService {
                 return folder.get("id").toString();
             }
         }
-        return null;
+        if (fileName.equals(SubmissionDirectoryService.MAKEFILE)) {
+            throw new MakefileNotFoundException();
+        }
+        throw new CanvasAPIException(fileName + " was not found.");
     }
 
     /**
