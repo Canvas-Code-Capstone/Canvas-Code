@@ -9,5 +9,8 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         sendResponse("confirmed");
 
         document.getElementById('update-text').textContent  = JSON.stringify(msg.data, null, '  ');
+
+
+
     }
 });

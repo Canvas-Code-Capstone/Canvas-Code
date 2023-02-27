@@ -118,9 +118,6 @@
     //otherwise insert within the assignment page
 
 
-    //create a div
-
-
     const el = document.getElementById("content-wrapper");
     console.log(el);
 

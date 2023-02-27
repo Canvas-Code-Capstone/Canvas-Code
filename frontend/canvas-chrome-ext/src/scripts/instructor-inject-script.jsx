@@ -115,7 +115,7 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     document.getElementById("iframe_holder").style.display = "none";
 
     console.log("generate terminal view function");
-    let appBar = InstructorView_appBar();
+    let appBar = instructorView_appBar();
     let tabContainer = initTabContainer();
     let codeContainer = initCodeContainer();
 
@@ -150,23 +150,14 @@ function generateReadOnlyCodeView(submissionFiles, instructorViewContainer) {
     playButton.addEventListener("click", async function (){
         //send post request to backend to start compilation or send makefile?
         console.log('calling compilation from instructor view');
-        setTimeout(async () => {
-            console.log('waited 5 seconds');
-            await callCompilation();
-        }, 5000);
-
+        await callCompilation();
     });
-
 
     //Play button listener
     abortButton.addEventListener("click", async function (){
         //send post request to backend to start compilation or send makefile?
         console.log('calling compilation from instructor view');
-        setTimeout(async () => {
-            console.log('waited 5 seconds');
-            await abortScriptExecution();
-        }, 5000);
-
+        await abortScriptExecution();
     });
 
 
@@ -326,7 +317,7 @@ function initTerminalFrame() {
 }
 
 //APP BAR SPECIFIC FUNCTIONS
-function InstructorView_appBar(){
+function instructorView_appBar(){
     let instructorViewAppBar = document.createElement("div");
     instructorViewAppBar.className = "instructor-appbar";
     instructorViewAppBar.id = "instructor-view-appbar";

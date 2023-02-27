@@ -108,6 +108,19 @@ Styles for compilation notifications
     padding: 2em;
 }
 
+.result-image {
+    width: 100px;
+    margin-top: -50px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.text-results {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 30px 0 10px;
+}
+
 
 
 /* #088099 bluish*/
