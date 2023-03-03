@@ -98,7 +98,7 @@ class ChromeApiControllerUnitTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         FilterRegistrationBean<HeaderFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new HeaderFilter(aesCryptoService));
+        filterRegistrationBean.setFilter(new HeaderFilter(aesCryptoService, env));
         filterRegistrationBean.setUrlPatterns(Arrays.asList("/submission/*","/evaluate"));
         filterRegistrationBean.setName("MyFilter");
         context.getAutowireCapableBeanFactory().initializeBean(filterRegistrationBean, "MyFilter");

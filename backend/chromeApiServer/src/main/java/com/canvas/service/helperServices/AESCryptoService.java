@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +17,7 @@ import java.util.Base64;
 /**
  * AESCryptoService class that provides methods to encrypt and decrypt Access tokens.
  */
-@Component
+@Service
 public class AESCryptoService {
     private static SecretKeySpec secretKey;
 
